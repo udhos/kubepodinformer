@@ -23,7 +23,9 @@ type Options struct {
 	// Restrict namespace.
 	Namespace string
 
-	// LabelSelector: "app=miniapi"
+	// LabelSelector restricts pods by label.
+	// Empty LabelSelector matches everything.
+	// Example: "app=miniapi,tier=backend"
 	LabelSelector string
 
 	// OnUpdate is required callback function for POD discovery.
@@ -34,6 +36,8 @@ type Options struct {
 
 	// DebugLog enables debug logs.
 	DebugLog bool
+
+	ResyncPeriod time.Duration
 }
 
 // Pod holds information about discovered pod.
@@ -102,12 +106,10 @@ func (i *PodInformer) Run() error {
 		},
 	}
 
-	resyncPeriod := time.Duration(0) // no resync
-
 	i.informer = cache.NewSharedIndexInformer(
 		listWatch,
 		&core_v1.Pod{},
-		resyncPeriod,
+		i.options.ResyncPeriod,
 		cache.Indexers{},
 	)
 

@@ -16,6 +16,9 @@ import (
 
 func main() {
 
+	//
+	// interval
+	//
 	intervalStr := os.Getenv("INTERVAL")
 	interval, errConv := time.ParseDuration(intervalStr)
 	if errConv != nil {
@@ -24,6 +27,29 @@ func main() {
 	}
 	log.Printf("INTERVAL='%s' interval=%v", intervalStr, interval)
 
+	//
+	// label selector
+	//
+	labelSelector := "app=miniapi"
+	ls := os.Getenv("LABEL_SELECTOR")
+	if ls != "" {
+		labelSelector = ls
+	}
+	log.Printf("LABEL_SELECTOR='%s' label_selector=%s", ls, labelSelector)
+
+	//
+	// resync period
+	//
+	resyncStr := os.Getenv("RESYNC_PERIOD")
+	resync, errSync := time.ParseDuration(resyncStr)
+	if errSync != nil {
+		log.Printf("RESYNC_PERIOD='%s': %v", resyncStr, errSync)
+	}
+	log.Printf("RESYNC_PERIOD='%s' resync_period=%v", resyncStr, resync)
+
+	//
+	// kube client
+	//
 	clientset, errClientset := newKubeClient()
 	if errClientset != nil {
 		log.Fatalf("kube clientset error: %v", errClientset)
@@ -32,9 +58,10 @@ func main() {
 	options := podinformer.Options{
 		Client:        clientset,
 		Namespace:     "default",
-		LabelSelector: "app=miniapi",
+		LabelSelector: labelSelector,
 		OnUpdate:      onUpdate,
 		DebugLog:      false,
+		ResyncPeriod:  resync,
 	}
 
 	informer := podinformer.New(options)
