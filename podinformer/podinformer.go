@@ -98,7 +98,7 @@ func (i *PodInformer) Run() error {
 	listWatch := &cache.ListWatch{
 		ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
 			options.LabelSelector = i.options.LabelSelector
-			return i.options.Client.CoreV1().Pods(i.options.Namespace).List(context.Background(), options)
+			return i.options.Client.CoreV1().Pods(i.options.Namespace).List(i.cancelCtx, options)
 		},
 		WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
 			options.LabelSelector = i.options.LabelSelector
