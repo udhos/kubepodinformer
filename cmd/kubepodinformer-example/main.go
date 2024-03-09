@@ -2,16 +2,12 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
+	"github.com/udhos/kube/kubeclient"
 	"github.com/udhos/kubepodinformer/podinformer"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 func main() {
@@ -50,7 +46,8 @@ func main() {
 	//
 	// kube client
 	//
-	clientset, errClientset := newKubeClient()
+	clientOptions := kubeclient.Options{DebugLog: true}
+	clientset, errClientset := kubeclient.New(clientOptions)
 	if errClientset != nil {
 		log.Fatalf("kube clientset error: %v", errClientset)
 	}
@@ -84,36 +81,4 @@ func onUpdate(pods []podinformer.Pod) {
 		log.Printf("%s: %d/%d: namespace=%s pod=%s ip=%s ready=%t",
 			me, i, len(pods), p.Namespace, p.Name, p.IP, p.Ready)
 	}
-}
-
-func newKubeClient() (*kubernetes.Clientset, error) {
-	const me = "newKubeClient"
-
-	kubeconfig := os.Getenv("KUBECONFIG")
-	if kubeconfig == "" {
-		home, errHome := os.UserHomeDir()
-		if errHome != nil {
-			log.Printf("%s: could not get home dir: %v", me, errHome)
-		}
-		kubeconfig = filepath.Join(home, "/.kube/config")
-	}
-
-	config, errKubeconfig := clientcmd.BuildConfigFromFlags("", kubeconfig)
-	if errKubeconfig != nil {
-		log.Printf("%s: kubeconfig: %v", me, errKubeconfig)
-
-		c, errInCluster := rest.InClusterConfig()
-		if errInCluster != nil {
-			log.Printf("%s: in-cluster-config: %v", me, errInCluster)
-		}
-		config = c
-	}
-
-	if config == nil {
-		return nil, errors.New("could not get cluster config")
-	}
-
-	clientset, errConfig := kubernetes.NewForConfig(config)
-
-	return clientset, errConfig
 }

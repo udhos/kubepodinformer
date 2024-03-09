@@ -3,6 +3,7 @@ module github.com/udhos/kubepodinformer
 go 1.22.1
 
 require (
+	github.com/udhos/kube v0.0.0
 	k8s.io/api v0.29.2
 	k8s.io/apimachinery v0.29.2
 	k8s.io/client-go v0.29.2
