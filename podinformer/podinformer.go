@@ -119,7 +119,7 @@ func (i *PodInformer) Run() error {
 			i.debugf("%s: add: '%s': error:%v", me, key, err)
 			i.update()
 		},
-		UpdateFunc: func(obj, new interface{}) {
+		UpdateFunc: func(obj, _ interface{}) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			i.debugf("%s: update: '%s': error:%v", me, key, err)
 			i.update()
