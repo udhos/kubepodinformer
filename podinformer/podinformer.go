@@ -147,7 +147,7 @@ func (i *PodInformer) update() {
 
 	pods := make([]Pod, 0, size)
 
-	for _, obj := range i.informer.GetStore().List() {
+	for _, obj := range list {
 		pod, ok := obj.(*core_v1.Pod)
 		if !ok {
 			i.errorf("%s: unexpected object type: %T", me, obj)
