@@ -65,7 +65,7 @@ func main() {
 	const limit = 50000
 
 	for {
-		for i := 0; i < limit; i++ {
+		for range limit {
 			once(options)
 		}
 		log.Printf("executed: %d", limit)

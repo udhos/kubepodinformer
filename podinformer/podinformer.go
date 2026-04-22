@@ -114,17 +114,17 @@ func (i *PodInformer) Run() error {
 	)
 
 	i.informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			i.debugf("%s: add: '%s': error:%v", me, key, err)
 			i.update()
 		},
-		UpdateFunc: func(obj, _ interface{}) {
+		UpdateFunc: func(obj, _ any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			i.debugf("%s: update: '%s': error:%v", me, key, err)
 			i.update()
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			i.debugf("%s: delete: '%s': error:%v", me, key, err)
 			i.update()
