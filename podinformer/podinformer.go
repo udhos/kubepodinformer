@@ -37,7 +37,13 @@ type Options struct {
 	// DebugLog enables debug logs.
 	DebugLog bool
 
+	// ResyncPeriod is the resync period for the shared index informer.
+	// If unset, the default is 0, meaning no resync.
 	ResyncPeriod time.Duration
+
+	// DebounceDelay is the delay between updates.
+	// If unset, the default is 2 seconds.
+	DebounceDelay time.Duration
 }
 
 // Pod holds information about discovered pod.
@@ -55,6 +61,7 @@ type PodInformer struct {
 	cancelCtx context.Context
 	cancel    func()
 	informer  cache.SharedIndexInformer
+	debouncer *debouncer
 }
 
 // New creates an informer.
@@ -68,6 +75,10 @@ func New(options Options) *PodInformer {
 		options.Logf = log.Printf
 	}
 
+	if options.DebounceDelay == 0 {
+		options.DebounceDelay = 2 * time.Second
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	i := &PodInformer{
@@ -75,6 +86,7 @@ func New(options Options) *PodInformer {
 		stopCh:    make(chan struct{}),
 		cancelCtx: ctx,
 		cancel:    cancel,
+		debouncer: newDebouncer(options.DebounceDelay),
 	}
 
 	return i
@@ -136,9 +148,18 @@ func (i *PodInformer) Run() error {
 	return nil
 }
 
+// update calls the callback with the current list of pods.
+// It uses a debouncer to coalesce updates.
 func (i *PodInformer) update() {
+	// Use debouncer to coalesce updates.
+	// The debouncer delay ensures that we don't call the callback too often.
+	i.debouncer.run(i.listToCallback)
+}
 
-	const me = "PodInformer.update"
+// listToCallback lists the pods and finally calls the OnUpdate callback.
+func (i *PodInformer) listToCallback() {
+
+	const me = "PodInformer.listToCallback"
 
 	list := i.informer.GetStore().List()
 	size := len(list)
@@ -176,6 +197,7 @@ func isPodReady(pod *core_v1.Pod) bool {
 
 // Stop stops the informer to release resources.
 func (i *PodInformer) Stop() {
+	i.debouncer.stop()
 	i.cancel()
 	close(i.stopCh)
 }

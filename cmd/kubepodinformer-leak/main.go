@@ -25,6 +25,16 @@ func main() {
 	log.Printf("INTERVAL='%s' interval=%v", intervalStr, interval)
 
 	//
+	// namespace
+	//
+	namespace := "default"
+	ns := os.Getenv("NAMESPACE")
+	if ns != "" {
+		namespace = ns
+	}
+	log.Printf("NAMESPACE='%s' namespace=%s", ns, namespace)
+
+	//
 	// label selector
 	//
 	labelSelector := "app=miniapi"
@@ -55,7 +65,7 @@ func main() {
 
 	options := podinformer.Options{
 		Client:        clientset,
-		Namespace:     "default",
+		Namespace:     namespace,
 		LabelSelector: labelSelector,
 		OnUpdate:      onUpdate,
 		DebugLog:      false,
