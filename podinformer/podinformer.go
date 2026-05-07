@@ -7,6 +7,7 @@ import (
 
 	"log"
 
+	"github.com/udhos/debounce/debounce"
 	core_v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -61,7 +62,7 @@ type PodInformer struct {
 	cancelCtx context.Context
 	cancel    func()
 	informer  cache.SharedIndexInformer
-	debouncer *debouncer
+	debouncer *debounce.Debouncer
 }
 
 // New creates an informer.
@@ -86,7 +87,7 @@ func New(options Options) *PodInformer {
 		stopCh:    make(chan struct{}),
 		cancelCtx: ctx,
 		cancel:    cancel,
-		debouncer: newDebouncer(options.DebounceDelay),
+		debouncer: debounce.New(options.DebounceDelay),
 	}
 
 	return i
@@ -153,7 +154,7 @@ func (i *PodInformer) Run() error {
 func (i *PodInformer) update() {
 	// Use debouncer to coalesce updates.
 	// The debouncer delay ensures that we don't call the callback too often.
-	i.debouncer.run(i.listToCallback)
+	i.debouncer.Run(i.listToCallback)
 }
 
 // listToCallback lists the pods and finally calls the OnUpdate callback.
@@ -197,7 +198,7 @@ func isPodReady(pod *core_v1.Pod) bool {
 
 // Stop stops the informer to release resources.
 func (i *PodInformer) Stop() {
-	i.debouncer.stop()
+	i.debouncer.Stop()
 	i.cancel()
 	close(i.stopCh)
 }
