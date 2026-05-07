@@ -198,7 +198,6 @@ func isPodReady(pod *core_v1.Pod) bool {
 
 // Stop stops the informer to release resources.
 func (i *PodInformer) Stop() {
-	i.debouncer.Stop()
 	i.cancel()
 	close(i.stopCh)
 }

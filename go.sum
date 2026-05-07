@@ -76,8 +76,8 @@ github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/udhos/debounce v0.0.1 h1:1ZsIW/nkeiyBwy3ycd9ztMhLbReH/uVoiWtpwKGJmPw=
-github.com/udhos/debounce v0.0.1/go.mod h1:NWqyI4Cg+JSbfofJHgZculXO+TlLw8HXw0ZLrzEbKYE=
+github.com/udhos/debounce v0.0.2 h1:wrksWPtFexLkBKVmW6sdiuoMSMp+mLmEyqNLxTM7s9g=
+github.com/udhos/debounce v0.0.2/go.mod h1:NWqyI4Cg+JSbfofJHgZculXO+TlLw8HXw0ZLrzEbKYE=
 github.com/udhos/kube v1.0.10 h1:CO68Epm29znbmmvVkejfvUVVbmsTrFGoNjM5xoPT8pY=
 github.com/udhos/kube v1.0.10/go.mod h1:+Z4rDNo2CjTKMO8bB/cdvKZL3PMkP7XU9/WfCJjh9Cc=
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=

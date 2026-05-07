@@ -3,7 +3,7 @@ module github.com/udhos/kubepodinformer
 go 1.26.2 // minimum
 
 require (
-	github.com/udhos/debounce v0.0.1
+	github.com/udhos/debounce v0.0.2
 	github.com/udhos/kube v1.0.10
 	k8s.io/api v0.36.0
 	k8s.io/apimachinery v0.36.0
